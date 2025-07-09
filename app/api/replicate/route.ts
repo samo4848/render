@@ -13,13 +13,23 @@ export async function POST(request: Request) {
     );
   }
 
+  // API anahtarının formatını kontrol et
+  const apiToken = process.env.REPLICATE_API_TOKEN;
+  if (!apiToken.startsWith('r8_')) {
+    console.error("Geçersiz Replicate API anahtarı formatı. Anahtar 'r8_' ile başlamalıdır.");
+    return NextResponse.json(
+      { error: "Geçersiz API anahtarı formatı. Lütfen Replicate hesabınızdan doğru API anahtarını alın." },
+      { status: 400 }
+    );
+  }
+
   try {
     const req = await request.json();
     const { image, theme, room } = req;
 
     // Replicate nesnesi, anahtarı GÜVENLİ BİR ŞEKİLDE .env.local'den alır.
     const replicate = new Replicate({
-      auth: process.env.REPLICATE_API_TOKEN,
+      auth: apiToken,
     });
 
     const model =
@@ -35,10 +45,36 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ output }, { status: 201 });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Replicate API hatası:", error);
+    
+    // Daha detaylı hata mesajları
+    if (error.message?.includes('Unauthorized') || error.status === 401) {
+      return NextResponse.json(
+        { error: "API anahtarı geçersiz veya yetkisiz. Lütfen Replicate hesabınızdan yeni bir API anahtarı oluşturun." },
+        { status: 401 }
+      );
+    }
+    
+    if (error.message?.includes('Not Found') || error.status === 404) {
+      return NextResponse.json(
+        { error: "Model bulunamadı veya erişim izni yok. Model adını kontrol edin." },
+        { status: 404 }
+      );
+    }
+    
+    if (error.message?.includes('rate limit') || error.status === 429) {
+      return NextResponse.json(
+        { error: "API kullanım limiti aşıldı. Lütfen daha sonra tekrar deneyin." },
+        { status: 429 }
+      );
+    }
+    
     return NextResponse.json(
-      { error: "Yapay zeka modeli çalıştırılırken bir sorun oluştu." },
+      { 
+        error: "Yapay zeka modeli çalıştırılırken bir sorun oluştu.",
+        details: error.message || "Bilinmeyen hata"
+      },
       { status: 500 }
     );
   }
