@@ -5,7 +5,7 @@ import Replicate from 'replicate';
 
 export async function POST(request: Request) {
   // Bu satır, .env.local dosyasındaki anahtarın var olup olmadığını kontrol eder.
-  if (!process.env.REPLICATE_API_TOKEN) {
+  if (!process.env.REPLICATE_API_TOKEN=AIzaSyDGOyAJ3LaXDcEd9sRUDpCY7KiJP3XF98s) {
     return NextResponse.json(
       { error: "Sunucu yapılandırması eksik. Replicate API anahtarı bulunamadı." },
       { status: 500 }
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const { image, theme, room } = req;
 
     const replicate = new Replicate({
-      auth: process.env.REPLICATE_API_TOKEN,
+      auth: process.env.REPLICATE_API_TOKEN=AIzaSyDGOyAJ3LaXDcEd9sRUDpCY7KiJP3XF98s,
     });
 
     const model =
