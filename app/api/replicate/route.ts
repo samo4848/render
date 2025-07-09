@@ -5,7 +5,7 @@ import Replicate from 'replicate';
 
 export async function POST(request: Request) {
   // API anahtarının olup olmadığını kontrol et
-  if (!process.env.REPLICATE_API_TOKEN) {
+  if (!process.env.REPLICATE_API_TOKEN=AIzaSyDGOyAJ3LaXDcEd9sRUDpCY7KiJP3XF98s) {
     return NextResponse.json(
       { error: "Sunucu yapılandırması eksik. Replicate API anahtarı bulunamadı." },
       { status: 500 }
@@ -43,4 +43,8 @@ export async function POST(request: Request) {
     // 7. Bir hata olursa yakala ve istemciye bildir
     console.error("Replicate API hatası:", error);
     return NextResponse.json(
-      { error:
+      { error: "Yapay zeka modeli çalıştırılırken bir sorun oluştu." },
+      { status: 500 }
+    );
+  }
+}
