@@ -1,11 +1,12 @@
-// app/api/replicate/route.ts DOSYASININ DOĞRU HALİ BUDUR
+// Bu kod dosyası SADECE .env.local dosyasındaki anahtarı okur.
+// İçinde asla bir anahtar bulunmaz.
 
 import { NextResponse } from 'next/server';
 import Replicate from 'replicate';
 
 export async function POST(request: Request) {
-  // Bu satır, .env.local dosyasındaki anahtarın var olup olmadığını kontrol eder.
-  if (!process.env.REPLICATE_API_TOKEN=AIzaSyDGOyAJ3LaXDcEd9sRUDpCY7KiJP3XF98s) {
+  // Bu satır, .env.local dosyasındaki anahtarın var olup olmadığını KONTROL EDER.
+  if (!process.env.REPLICATE_API_TOKEN) {
     return NextResponse.json(
       { error: "Sunucu yapılandırması eksik. Replicate API anahtarı bulunamadı." },
       { status: 500 }
@@ -16,8 +17,9 @@ export async function POST(request: Request) {
     const req = await request.json();
     const { image, theme, room } = req;
 
+    // Replicate nesnesi, anahtarı GÜVENLİ BİR ŞEKİLDE .env.local'den alır.
     const replicate = new Replicate({
-      auth: process.env.REPLICATE_API_TOKEN=AIzaSyDGOyAJ3LaXDcEd9sRUDpCY7KiJP3XF98s,
+      auth: process.env.REPLICATE_API_TOKEN,
     });
 
     const model =
